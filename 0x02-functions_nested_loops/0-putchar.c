@@ -1,10 +1,10 @@
 #include "main.h"
 
 /**
-* main - function prints text as output
-*
-* Return: Always 0
-*/
+ * main - function prints text as output.
+ *
+ * Return: Always 0
+ */
 
 int main(void)
 {
