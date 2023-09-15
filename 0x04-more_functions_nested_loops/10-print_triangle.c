@@ -2,9 +2,9 @@
 
 /**
  * print_triangle - input point
- * 
- * Description: Prints a triangle
- *@size: size of the triangle
+ *
+ * Description: Prints diagonals
+ *@size: triangle size
  * Return: void
  */
 
