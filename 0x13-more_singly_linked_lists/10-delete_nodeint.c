@@ -1,4 +1,4 @@
-include "lists.h"
+#include "lists.h"
 
 /**
  * delete_nodeint_at_index - Deletes the node at a given index in a list.
@@ -9,34 +9,35 @@ include "lists.h"
  */
 int delete_nodeint_at_index(listint_t **head, unsigned int index)
 {
-	listint_t *current, *temp;
-	unsigned int i;
-	
-	if (!*head)
-	return (-1);
+    listint_t *current, *temp;
+    unsigned int i;
 
-	if (index == 0)
-	{
-		temp = *head;
-		*head = temp->next;
-		free(temp);
-		return (1);
-	}
+    if (!*head)
+        return (-1);
 
-	current = *head;
-	for (i = 0; i < index - 1; i++)
-	{
-	if (!current->next)
-		return (-1);
-	current = current->next;
-	}
+    if (index == 0)
+    {
+        temp = *head;
+        *head = temp->next;
+        free(temp);
+        return (1);
+    }
 
-	if (!current->next)
-		return (-1);
+    current = *head;
+    for (i = 0; i < index - 1; i++)
+    {
+        if (!current->next)
+            return (-1);
+        current = current->next;
+    }
 
-	temp = current->next;
-	current->next = temp->next;
-	free(temp);
+    if (!current->next)
+        return (-1);
 
-	return (1);
+    temp = current->next;
+    current->next = temp->next;
+    free(temp);
+
+    return (1);
+}
 }
