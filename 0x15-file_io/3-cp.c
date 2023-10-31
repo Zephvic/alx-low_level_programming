@@ -1,58 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include "main.h"
 
+#define BUFFER_SIZE 1024
+
 /**
- * error_exit - Print error message and exit with specified code.
- * @code: Exit code.
- * @msg: Error message to print.
+ * error_exit - Print an error message and exit with a specified status code.
+ * @status: The exit status code.
+ * @msg: The error message to print.
  */
-void error_exit(int code, const char *msg)
+void error_exit(int status, const char *msg)
 {
 	dprintf(STDERR_FILENO, "%s\n", msg);
-	exit(code);
+	exit(status);
 }
 
 /**
- * main - Copy the content of one file to another.
- * @ac: Argument count.
- * @av: Argument vector.
- *
- * Return: 0 on success.
+ * copy_file - Copy the content of one file to another.
+ * @src: Source file name.
+ * @dest: Destination file name.
  */
-int main(int ac, char **av)
+void copy_file(const char *src, const char *dest)
 {
-	int source_fd, dest_fd;
-	ssize_t n;
-	char buf[1024];
+	int src_fd, dest_fd;
+	ssize_t bytes_read;
+	char buffer[BUFFER_SIZE];
 
-	if (ac != 3)
-		error_exit(97, "Usage: cp file_from file_to");
-
-	source_fd = open(av[1], O_RDONLY);
-	if (source_fd == -1)
+	src_fd = open(src, O_RDONLY);
+	if (src_fd == -1)
 		error_exit(98, "Error: Can't read from file");
 
-	dest_fd = open(av[2], O_CREAT | O_WRONLY | O_TRUNC, 0664);
+	dest_fd = open(dest, O_WRONLY | O_CREAT | O_TRUNC, 0664);
 	if (dest_fd == -1)
-		error_exit(99, "Error: Can't write to file");
+	error_exit(99, "Error: Can't write to file");
 
-	while ((n = read(source_fd, buf, sizeof(buf))) > 0)
+	while ((bytes_read = read(src_fd, buffer, BUFFER_SIZE)) > 0)
 	{
-		if (write(dest_fd, buf, n) != n)
+		if (write(dest_fd, buffer, bytes_read) == -1)
 			error_exit(99, "Error: Can't write to file");
 	}
 
-	if (n == -1)
+	if (bytes_read == -1)
 		error_exit(98, "Error: Can't read from file");
 
-	if (close(source_fd) == -1)
-		error_exit(100, "Error: Can't close fd");
-	if (close(dest_fd) == -1)
-		error_exit(100, "Error: Can't close fd");
+	if (close(src_fd) == -1 || close(dest_fd) == -1)
+	error_exit(100, "Error: Can't close file descriptor");
+}
+
+int main(int argc, char *argv[])
+{
+	if (argc != 3)
+		error_exit(97, "Usage: cp file_from file_to");
+
+	copy_file(argv[1], argv[2]);
 
 	return (0);
 }
-
